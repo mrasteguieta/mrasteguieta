@@ -1,0 +1,212 @@
+#include <iostream>
+#include <fstream>
+#include <Windows.h>
+using namespace std;
+
+void gotoxy(int x, int y){
+    HANDLE hcon = GetStdHandle(STD_OUTPUT_HANDLE);
+    COORD dwPos;
+    dwPos.X=x;
+    dwPos.Y=y;
+    SetConsoleCursorPosition(hcon, dwPos);
+}
+
+int main(){
+	system("Color 0A");
+	
+    int DPI,BDPI,caso=0,nombre,apellido,edad,telefono,no_telefono,edad1; //Se definen las entradas de Variables
+    ofstream Guardar;                      
+    ifstream Leer;
+    fstream Temp; 
+    Guardar.open("InfoRegistros.txt",ios::app); //Archivo de Texto Que Tendra escritos los registros
+    while(caso!=6)
+    {
+    	//Menu Del Programa De Registros
+        cout<<" __________________________"<<endl;
+        cout<<"| MANIPULACION DE ARCHIVOS |"<<endl;
+        cout<<"|--------------------------|"<<endl;
+        cout<<"|Opcion 1:Guardar  Registro|"<<endl;
+        cout<<"|__________________________|"<<endl;
+        cout<<"|Opcion 2:Leer     Registro|"<<endl;
+        cout<<"|__________________________|"<<endl;
+        cout<<"|Opcion 3:Buscar   Registro|"<<endl;
+        cout<<"|__________________________|"<<endl;
+        cout<<"|Opcion 4:Editar   Registro|"<<endl;
+        cout<<"|__________________________|"<<endl;
+        cout<<"|Opcion 5:Eliminar Registro|"<<endl; 
+        cout<<"|__________________________|"<<endl;            
+        cout<<"|Opcion 6:Salir De Programa|"<<endl;
+        cout<<"|__________________________|"<<endl;
+        cout<<endl;
+        cout<<"Escriba el numero de su opcion:"<<endl;
+        cout<<"______________________________"<<endl;
+        cin>>caso;
+
+        switch(caso)
+        {
+            case 1:                                                           //almacenamiento de los datos con el ofstream
+                {
+                    system("cls");
+                    cout<<"Ingrese Nombre: ";
+                    cin>>nombre;
+                    cout<<"Ingrese Apellido: ";
+                    cin>>apellido;
+                    cout<<"Ingrese su Edad: ";
+                    cin>>edad;
+                    cout<<"Ingrese Numero de Telefono: ";
+                    cin>>telefono;
+                    cout<<"DATOS DEL DPI: ";
+                    cin>>DPI;
+                    Guardar<<nombre<<" "<<apellido<<" "<<edad<<" "<<telefono<<" "<<DPI<<endl;
+                    break;
+                }
+            case 2:                                                     //abrir o leer los archivos con el ifstream
+                {
+                    system("cls");  
+                    Leer.open("InfoRegistros.txt");
+                    Leer>>nombre>>apellido>>edad>>telefono;
+                    while(!Leer.eof())
+                    {
+                        Leer>>DPI;
+                        cout<<"----------------------------"<<endl;
+                        cout<<"Nombre:    "<<nombre<<endl;
+                        cout<<"Apellido:  "<<apellido<<endl;
+                        cout<<"Edad:      "<<edad<<" anios"<<endl;            // mostrar los datos que se ingresaron en el ofstream
+                        cout<<"Telefono:  "<<telefono<<endl;
+                        cout<<"DPI:       "<<DPI<<endl;
+                        cout<<"----------------------------"<<endl;
+                        cout<<endl;
+                        Leer>>nombre>>apellido>>edad>>telefono;
+                    }
+                    Leer.close();
+                    break;
+                }
+            case 3:                                                         //buscar un fichero existente en tu almacenamiento fstream
+                {
+                    system("cls");  
+                    Leer.open("InfoRegistros.txt");
+                    Leer>>nombre>>apellido>>edad>>telefono;
+                    bool siconexion=false;
+                    cout<<"Ingrese su numero de DPI para buscar"<<endl;
+                    cin>>BDPI;
+                    while(!Leer.eof())
+                    {
+                        Leer>>DPI;
+                        if(DPI==BDPI)
+                        {
+                            siconexion=true;
+                            cout<<"----------------------------"<<endl;
+                            cout<<"Nombre:    "<<nombre<<endl;
+                            cout<<"Apellido:  "<<apellido<<endl;
+                            cout<<"Edad:      "<<edad<<" anio"<<endl;
+                            cout<<"Telefono:  "<<telefono<<endl;
+                            cout<<"DPI:       "<<DPI<<endl;
+                            cout<<"----------------------------"<<endl;
+                            cout<<endl;
+                        }
+                        Leer>>nombre>>apellido>>edad>>telefono;
+                    }
+                    if(siconexion==false)
+                    {
+                        cout<<"DPI no siconexion"<<endl;
+                    }
+                    Leer.close();
+                    break;
+                }
+
+            case 4:                                                           //variables temporales guardar.open
+                {
+                    system("cls");  
+                    Leer.open("InfoRegistros.txt");                                //abre fichero original
+                    Temp.open("Temp.txt");                                   //abrimos el temporal tambn
+                    Leer>>nombre>>apellido>>edad>>telefono;
+                    bool siconexion=false;
+                    cout<<"Ingrese DPI para modificar datos"<<endl;
+                    cin>>BDPI;
+                    while(!Leer.eof())
+                    {
+                        Leer>>DPI;
+                        if(DPI==BDPI)
+                        {
+                            siconexion=true;
+                            cout<<"Nombre:    "<<nombre<<endl;
+                            cout<<"Apellido:  "<<apellido<<endl;
+                            cout<<"Edad :     "<<edad<<" años"<<endl;
+                            cout<<"Telefono:  "<<telefono<<endl;
+                            cout<<"DPI:    "<<DPI<<endl;
+                            cout<<endl;
+                            cout<<"Ingrese su Edad a modificar"<<endl;
+                            cin>>edad1;
+                            cout<<"Ingrese nuevo numero de telefono"<<endl;
+                            cin>>no_telefono;
+                            Temp<<nombre<<" "<<apellido<<" "<<edad1<<" "<<no_telefono<<" "<<DPI<<endl;
+                            cout<<endl;
+                            cout<<"Modificado"<<endl;
+                        }
+                        else
+                        {
+                            Temp<<nombre<<" "<<apellido<<" "<<edad<<" "<<telefono<<" "<<DPI<<endl;
+                        }
+                        Leer>>nombre>>apellido>>edad>>telefono;
+                    }
+                    if(siconexion==false)
+                    {
+                        cout<<"DPI no existe"<<endl;
+                    }
+                    Leer.close();
+                    Temp.close();
+                    remove("InfoRegistros.txt");
+                    rename("Temp.txt","InfoRegistros.txt");
+                    break;
+                }
+
+            case 5:                                                           //eliminacion de los datos almacenados en el ofstream
+                {
+                    system("cls");
+                    Leer.open("InfoRegistros.txt");
+                    Temp.open("Temp.txt");
+                    Leer>>nombre>>apellido>>edad>>telefono;
+                    bool siconexion=false;
+                    cout<<"Ingrese DPI para eliminar datos"<<endl;
+                    cin>>BDPI;
+                    while(!Leer.eof())
+                    {
+                        Leer>>DPI;
+                        if(DPI==BDPI)
+                        {
+                            siconexion=true;
+                            cout<<"Nombre:    "<<nombre<<endl;
+                            cout<<"Apellido:  "<<apellido<<endl;
+                            cout<<"Edad:      "<<edad<<endl;
+                            cout<<"Telefono:  "<<telefono<<endl;
+                            cout<<"DPI:       "<<DPI<<endl;
+                            cout<<endl;
+                            cout<<"Eliminado"<<endl;
+                        }
+                        else
+                        {
+                            Temp<<nombre<<" "<<apellido<<" "<<edad<<" "<<telefono<<" "<<DPI<<endl;
+                        }
+                        Leer>>nombre>>apellido>>edad>>telefono;
+                    }
+                    if(siconexion==false)
+                    {
+                        cout<<"DPI no existe"<<endl;
+                    }
+                    Leer.close();
+                    Temp.close();
+                    remove("InfoRegistros.txt");
+                    rename("Temp.txt","InfoRegistros.txt");
+
+                    break;
+                }
+            case 6:
+            	{
+            		system("cls");
+            		
+            		break;
+				}
+			}
+        }   
+		return 0;                                               //salida del programa con return 0;
+    }
